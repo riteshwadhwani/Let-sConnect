@@ -2,9 +2,12 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import {useSelector} from 'react-redux'
 
 
 const IdeaForm = () => {
+  const {currentUser} = useSelector(state => state.user);
+  console.log(currentUser);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
@@ -19,7 +22,7 @@ const IdeaForm = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data }),
+        body: JSON.stringify({ username:currentUser.user.name,email:currentUser.user.email, ...data }),
       }
     );
     const res = await savedUserResponse.json();

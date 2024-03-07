@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
+import {Spinner} from 'flowbite-react'
+import { checkAuthStatus } from "../helpers/apiCommunicator";
+import { signInSucess } from "../redux/Slice/UserSlice";
+import {toast} from 'react-hot-toast'
 
 const HomePage = () => {
-  const [ideas, setIdeas] = useState();
+  const [ideas, setIdeas] = useState([]);
   const[loading,setLoading] = useState(true);
-  const {currentUser} = useSelector(state=>state.user);
-
+  const dispatch = useDispatch();
   const getAllData = async () => {
     try {
       const getIdeas = await fetch(
@@ -18,24 +21,24 @@ const HomePage = () => {
           },
         }
       );
-
       const res = await getIdeas.json();
       setIdeas(res.ideas);
-      console.log(res);
-      setLoading(false);
+     
+     
     } catch (error) {
       console.log(error);
+      toast.error("Please try After Some Time");
     }
-  };
-
+  }; 
   useEffect(() => {
     getAllData();
+    setLoading(false);
   },[]);
 
   return (
     <>
      {
-      loading ? (<div>Loading.....</div>) :
+      loading ? (<div> <Spinner aria-label="Center-aligned spinner example" /></div>) :
       ( <section className="container h-screen  w-fit overflow-x-hidden px-4 mx-auto py-4">
         <div className="sm:flex items-center justify-between">
           <div>
@@ -91,16 +94,16 @@ const HomePage = () => {
                             <div className="flex-shrink-0 h-10 w-10">
                               <img
                                 className="h-10 w-10 rounded-full object-cover"
-                                src={currentUser.user.image}
+                                src={idea.image}
                                 alt=""
                               />
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium  dark:text-white">
-                                {currentUser.user.name}
+                                {idea.username}
                               </div>
                               <div className="text-sm  dark:text-gray-300">
-                                {currentUser.user.email}
+                                {idea.email}
                               </div>
                             </div>
                           </div>

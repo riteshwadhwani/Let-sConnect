@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {useSelector,useDispatch} from 'react-redux'
 import {signInSucess} from '../redux/Slice/UserSlice'
+import axios from "axios";
 
 
 const LoginForm = () => {
@@ -15,26 +16,16 @@ const LoginForm = () => {
     if( !data.email || !data.password){
       return toast.error("All fields are required");
     }
-    const savedUserResponse = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/userLogin`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...data }),
-      }
-    );
-    const resdata = await savedUserResponse.json();
-    console.log("res",resdata);
-    if(!resdata.sucess){
-      toast.error(resdata.message);
-    }
-    else{
-      dispatch(signInSucess(resdata));
+    try {
+      const savedUserResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/userLogin`
+    ,{...data});
+    console.log(savedUserResponse);
+     dispatch( signInSucess(savedUserResponse.data));
+     toast.success("Signed In!!",{id:'a'});
     navigate("/")
-    }
-    
+    } catch (error) {
+      toast.error("Invali Credentials");
+    } 
   };
 
   return (
